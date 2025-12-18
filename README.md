@@ -1,4 +1,4 @@
-# 00 – .NET on Linux Cheat Repository
+# .NET on Linux Cheat Repository
 
 **Cross-platform .NET (6/8 LTS) CLI cheatsheets, Arch/Ubuntu installation, troubleshooting, OmniSharp, Docker, ML.NET for Linux users.**
 
@@ -9,118 +9,57 @@
 wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
 chmod +x dotnet-install.sh
 ./dotnet-install.sh --channel 8.0
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$PATH:$HOME/.dotnet
 ```
 
-**Table of Contents**
-
-| Category          | Files                                                                                                                      |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Core Concepts** | [01-intro](docs/01-intro.md) [02-architecture](docs/02-architecture.md) [03-clr-gc-safety](docs/03-clr-gc-safety.md)       |
-| **Linux Setup**   | [Arch](linux/01-arch-setup.md) [Ubuntu](linux/02-ubuntu-setup.md) [Multi-SDK](linux/03-multi-sdk-management.md)            |
-| **CLI Commands**  | [Basics](cli/01-dotnet-basics.md) [Templates](cli/02-dotnet-new-templates.md) [Build/Publish](cli/03-build-run-publish.md) |
-| **Cheatsheets**   | [CLI](cheats/04-dotnet-cli-cheats.md) [Troubleshooting](cheats/05-troubleshooting.md)                                      |
-
-**MIT License** • Contributions welcome: [CONTRIBUTING.md](CONTRIBUTING.md)
-
-
----
-
-## **linux/02-ubuntu-setup.md**
-```markdown
-# 02 – Ubuntu .NET Setup
-
-## Install .NET 8 LTS (Official Microsoft)
-
 ```bash
-wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-rm packages-microsoft-prod.deb
-sudo apt-get update
-sudo apt-get install -y dotnet-sdk-8.0
-````
-
-## Verify
-
-```bash
-dotnet --version    # 8.0.xxx
-dotnet --info       # Full environment
-dotnet new console -o test && dotnet run
+# Arch Linux (.NET 8 LTS)
+sudo pacman -S dotnet-sdk-8.0 dotnet-runtime-8.0
+dotnet --version
 ```
 
-## Common Issues
+## Repository Structure
 
-**Error:** `A fatal error occurred. The required library libhostpolicy.so could not be found`
+| Category            | Files                                                                                                                           | Purpose                             |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| **Core Concepts**   | [01-intro](docs/01-intro.md) [02-architecture](docs/02-architecture.md) [03-clr-gc-safety](docs/03-clr-gc-safety.md)            | Architecture, CLR, GC, type safety  |
+| **Linux Setup**     | [Arch](linux/01-arch-setup.md) [Ubuntu](linux/02-ubuntu-setup.md) [Multi-SDK](linux/03-multi-sdk-management.md)                 | Distro-specific installation guides |
+| **CLI Commands**    | [Basics](cli/01-dotnet-basics.md) [Templates](cli/02-dotnet-new-templates.md) [Build/Publish](cli/03-build-run-publish.md)      | Command reference and usage         |
+| **Advanced Topics** | [RIDs](cli/04-runtime-identifiers.md) [Cross-compilation](cli/05-cross-compilation.md) [Performance](cli/06-performance-aot.md) | Runtime IDs, cross-compilation, AOT |
+| **Cheatsheets**     | [CLI](cheats/04-dotnet-cli-cheats.md) [Troubleshooting](cheats/05-troubleshooting.md) [Shell](cheats/01-linux-shell-basics.md)  | Quick reference, one-liners         |
+| **Specialized**     | [Docker](cli/07-docker-containers.md) [OmniSharp](linux/05-omnisharp-install.md) [ML.NET](docs/07-ml-dotnet-linux.md)           | Containerization, tooling, ML       |
 
-```bash
-sudo apt-get install -y libc6-dev
-sudo apt-get update && sudo apt-get upgrade
-```
+## Key Features
 
-````
+- **LTS Focused**: Primary support for .NET 6 and .NET 8 LTS versions
+- **Bash-Only**: All code examples in bash for Linux environments
+- **Real Errors**: Includes actual error messages and solutions
+- **Troubleshooting-First**: Practical solutions over theory
+- **Cross-Platform**: Works across Arch, Ubuntu, and other Linux distributions
+- **Production Ready**: Includes Docker, deployment, and monitoring guidance
 
----
+## Getting Started
 
-## **cli/01-dotnet-basics.md**
-```markdown
-# 01 – .NET CLI Basics
+1. **Choose your distribution** and follow the setup guide
+2. **Verify installation** with basic commands
+3. **Create your first project** using templates
+4. **Build and run** your application
+5. **Publish for deployment** with appropriate runtime identifiers
 
-## Core Commands
+## Version Support
 
-```bash
-dotnet --help              # All commands
-dotnet --version           # Current SDK
-dotnet --list-sdks         # All SDKs
-dotnet --info              # Full diagnostics
-````
+| Version    | LTS Status | Support Until | Recommended For              |
+| ---------- | ---------- | ------------- | ---------------------------- |
+| **.NET 8** | LTS        | November 2026 | New projects, production     |
+| **.NET 6** | LTS        | November 2024 | Existing projects, migration |
+| **.NET 7** | Non-LTS    | May 2024      | Experimental features        |
+| **.NET 9** | Preview    | TBD           | Cutting-edge development     |
 
-## Project Lifecycle
+**Note**: Always prefer LTS versions (.NET 6/8) for production workloads.
 
-```bash
-dotnet new console -o MyApp    # Create
-cd MyApp
-dotnet restore                 # NuGet packages
-dotnet build                   # Compile → bin/Debug/net8.0/
-dotnet run                     # Build+run
-dotnet clean                   # Remove bin/obj
-```
+## Contributing
 
-**Output files:** `MyApp.dll`, `MyApp.deps.json`, `MyApp.pdb` (debug symbols).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding new content, reporting issues, or submitting improvements.
 
-````
-
----
-
-## **cheats/04-dotnet-cli-cheats.md**
-```markdown
-# 04 – .NET CLI One-Liners
-
-## Project Creation
-
-```bash
-dotnet new console           # Basic console
-dotnet new webapi            # REST API
-dotnet new web -o MySite     # Razor pages
-dotnet new classlib -o Lib   # Class library
-ls MySite/                   # .csproj + Program.cs
-````
-
-## Build & Run
-
-```bash
-dotnet build -c Release      # Optimized build
-dotnet run --project MySite  # Specific project
-dotnet run -p:PublishTrimmed=true  # Tree-shake unused code
-```
-
-## Inspect Output
-
-```bash
-ls -la bin/Release/net8.0/  # .dll, .deps.json, .pdb, .runtimeconfig.json
-cat MyApp.deps.json | jq .   # Dependencies (if jq installed)
-```
-
----
-
-**Continue?** These are the first 9 files (core structure). Remaining 16 files (multi-sdk, publish, Docker, troubleshooting, ML.NET, etc.) ready in next response. All follow exact same pattern: **formal, bash-only, 3-lines max explanations, LTS-focused, real error messages**.
-
-**Confirm format → I'll generate the rest.**
+**MIT License** • Contributions welcome
